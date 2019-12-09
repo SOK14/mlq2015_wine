@@ -107,3 +107,34 @@ def calc_AR(predict: torch.Tensor, target: torch.Tensor) -> float:
     #     print("error in calcAR")
     #     sys.exit()
     return ar
+
+
+def calc_quadratic_weighted_kappa(predict_cat: torch.Tensor, target: torch.Tensor, cat_num: int) -> float:
+    try:
+        predict_cat = predict_cat.cpu().numpy()
+        target = target.cpu().numpy()
+    except:
+        pass
+
+    o = np.zeros([cat_num, cat_num])
+    e = np.zeros([cat_num, cat_num])
+    w = np.zeros([cat_num, cat_num])
+    samples = len(target)
+    for i in range(cat_num):
+        for j in range(cat_num):
+            w[i, j] = (i - j) ** 2
+            o[i, j] = ((predict_cat == i) & (target == j)).sum()
+            e[i, j] = (predict_cat == i).sum() * (target == j).sum() / samples
+
+    numerator = 0.0
+    denominator = 0.0
+    for i in range(cat_num):
+        for j in range(cat_num):
+            numerator += w[i, j] * o[i, j]
+            denominator += w[i, j] * e[i, j]
+
+    kappa = 1.0 - numerator / denominator
+
+    return kappa
+
+
