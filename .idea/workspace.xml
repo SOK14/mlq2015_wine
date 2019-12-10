@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1bd15774-781e-4dae-aea4-320a1f94afe0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/calc.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/calc.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,7 +28,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="539">
+            <state relative-caret-position="3540">
               <caret line="249" selection-start-line="249" selection-end-line="249" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
@@ -51,8 +52,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/calc.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="344">
-              <caret line="119" selection-start-line="119" selection-end-line="119" />
+            <state relative-caret-position="419">
+              <caret line="159" column="106" lean-forward="true" selection-start-line="159" selection-start-column="106" selection-end-line="159" selection-end-column="106" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -94,7 +95,7 @@
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-10" />
     <option name="y" value="-10" />
-    <option name="width" value="979" />
+    <option name="width" value="980" />
     <option name="height" value="1040" />
   </component>
   <component name="ProjectView">
@@ -215,6 +216,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/main1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3540">
+          <caret line="249" selection-start-line="249" selection-end-line="249" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/model1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="390">
@@ -225,20 +236,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="539">
-          <caret line="249" selection-start-line="249" selection-end-line="249" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/calc.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="119" selection-start-line="119" selection-end-line="119" />
+        <state relative-caret-position="419">
+          <caret line="159" column="106" lean-forward="true" selection-start-line="159" selection-start-column="106" selection-end-line="159" selection-end-column="106" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>

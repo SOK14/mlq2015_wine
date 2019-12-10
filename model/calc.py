@@ -24,7 +24,7 @@ class EvaluateCat():
 
     def acc_by_cat(self, cat_num: int):
         total = (self.target == cat_num).sum().cpu().numpy()
-        correct = ((self.predict_cat == cat_num)&(self.target == cat_num)).sum().cpu().numpy()
+        correct = ((self.predict_cat == cat_num) & (self.target == cat_num)).sum().cpu().numpy()
 
         return correct / total
 
@@ -74,6 +74,7 @@ class EvaluateCat():
         #     sys.exit()
         return ar
 
+
 def calc_AR(predict: torch.Tensor, target: torch.Tensor) -> float:
     """
     :param predict: sftmax value shape=[samples, 2]
@@ -109,7 +110,7 @@ def calc_AR(predict: torch.Tensor, target: torch.Tensor) -> float:
     return ar
 
 
-def calc_quadratic_weighted_kappa(predict_cat: torch.Tensor, target: torch.Tensor, cat_num: int) -> float:
+def quadratic_weighted_kappa(predict_cat: torch.Tensor, target: torch.Tensor, cat_num: int) -> float:
     try:
         predict_cat = predict_cat.cpu().numpy()
         target = target.cpu().numpy()
@@ -138,3 +139,35 @@ def calc_quadratic_weighted_kappa(predict_cat: torch.Tensor, target: torch.Tenso
     return kappa
 
 
+# -- nelder mead
+# -- minimization quadratic_weighted_kappa
+class NelderMead()
+    def __init__(self, out: torch.Tensor, target: torch.Tensor):
+        s = nn.Softmax(dim=1)
+        self.out = out
+        self.predict = s(out)
+        self.target = target
+
+    def expected_value(self):
+        eval = torch.zeros(len(self.predict))
+        for i in range(len(self.predict)):
+            eval[i] = self.predict[i, 0] * 0.0 \
+                      + self.predict[i, 1] * 1.0 \
+                      + self.predict[i, 2] * 2.0 \
+                      + self.predict[i, 3] * 3.0
+        return eval
+
+    def reflection(self, centor_vec: torch.Tensor, worst_vec: torch.Tensor, alpha: float) -> torch.Tensor:
+        pass
+
+    def expansion(self):
+        pass
+
+    def contraction(self):
+        pass
+
+    def shrink_contraction(self):
+        pass
+
+    def optimize(self):
+        pass
