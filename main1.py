@@ -25,7 +25,7 @@ def get_hyperParam():
         "epoch_num": 5000,
         "learning_rate": 0.0001,
         "amsgrad_bool": True,  # -- for Adam optimizer
-        "isSave": False
+        "isSave": True
     }
 
 
@@ -88,6 +88,7 @@ def main1():
 
         best_score0 = [[0.0, ""], [0.0, ""], [0.0, ""]]  # -- for acc_total
         best_score1 = [[0.0, ""], [0.0, ""], [0.0, ""]]  # -- for acc_ave
+        best_score2 = [[0.0, ""], [0.0, ""], [0.0, ""]]  # -- for kappa
         isbest = False
         isdiversity = True
         b_size = hp["batch_size"]
@@ -132,10 +133,10 @@ def main1():
             with torch.no_grad():
                 # -- validation
                 out = net(vd_ready[0])
-                threshold_optim = calc.NelderMead(out, torch.squeeze(vd_ready[1]).long())
-                threshold = threshold_optim.optimize()
-                print(threshold)
-                ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(vd_ready[1]).long(), threshold)
+                ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
+                # threshold_optim = calc.NelderMead(out, torch.squeeze(vd_ready[1]).long())
+                # threshold = threshold_optim.optimize()
+                # ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(vd_ready[1]).long(), threshold)
 
                 # -- save condition check
                 if ev.diversity() < 0.8:
@@ -146,25 +147,43 @@ def main1():
                         isbest = True
                         if os.path.exists(r"./save/save_param" + r"/net" + best_score0[-1][1] + r'.ckpt'):
                             os.remove(r"./save/save_param" + r"/net" + best_score0[-1][1] + r'.ckpt')
-                        else:
-                            print(r"./save/save_param" + r"/net" + best_score0[-1][1] + r'.ckpt')
+                        if os.path.exists(r"./save/save_param" + r"/threshold" + best_score0[-1][1] + r'.csv'):
+                            os.remove(r"./save/save_param" + r"/threshold" + best_score0[-1][1] + r'.csv')
                         id = r"0_" + str(k) + r"_" + str(epoch)
                         best_score0 = best_score0[:2]
                         best_score0 += [[ev.acc_total(), id]]
                         best_score0.sort(reverse=True)
                         print(best_score0)
                         torch.save(net.state_dict(), r"./save/save_param" + r"/net" + id + r'.ckpt')
+                        # pd.DataFrame(threshold.numpy()).to_csv(r"./save/save_param" + r"/threshold" + id + r'.csv', index=None)
 
                     if best_score1[-1][0] <= ev.acc_ave() and ev.diversity() > 0.9:
                         isbest = True
                         if os.path.exists(r"./save/save_param" + r"/net" + best_score1[-1][1] + r'.ckpt'):
                             os.remove(r"./save/save_param" + r"/net" + best_score1[-1][1] + r'.ckpt')
+                        if os.path.exists(r"./save/save_param" + r"/threshold" + best_score1[-1][1] + r'.csv'):
+                            os.remove(r"./save/save_param" + r"/threshold" + best_score1[-1][1] + r'.csv')
                         id = r"1_" + str(k) + r"_" + str(epoch)
                         best_score1 = best_score1[:2]
                         best_score1 += [[ev.acc_ave(), id]]
                         best_score1.sort(reverse=True)
                         print(best_score1)
                         torch.save(net.state_dict(), r"./save/save_param" + r"/net" + id + r'.ckpt')
+                        # pd.DataFrame(threshold.numpy()).to_csv(r"./save/save_param" + r"/threshold" + id + r'.csv', index=None)
+
+                    if best_score2[-1][0] <= ev.quadratic_weighted_kappa() and ev.diversity() > 0.9:
+                        isbest = True
+                        if os.path.exists(r"./save/save_param" + r"/net" + best_score2[-1][1] + r'.ckpt'):
+                            os.remove(r"./save/save_param" + r"/net" + best_score2[-1][1] + r'.ckpt')
+                        if os.path.exists(r"./save/save_param" + r"/threshold" + best_score2[-1][1] + r'.csv'):
+                            os.remove(r"./save/save_param" + r"/threshold" + best_score2[-1][1] + r'.csv')
+                        id = r"2_" + str(k) + r"_" + str(epoch)
+                        best_score2 = best_score1[:2]
+                        best_score2 += [[ev.quadratic_weighted_kappa(), id]]
+                        best_score2.sort(reverse=True)
+                        print(best_score1)
+                        torch.save(net.state_dict(), r"./save/save_param" + r"/net" + id + r'.ckpt')
+                        # pd.DataFrame(threshold.numpy()).to_csv(r"./save/save_param" + r"/threshold" + id + r'.csv', index=None)
 
                 # -- display
                 if isbest == True or hp["isSave"] != True:
@@ -178,17 +197,15 @@ def main1():
                     print("acc_2: ", ev.acc_by_cat(cat_num=2))
                     print("acc_3: ", ev.acc_by_cat(cat_num=3))
                     print("diversity: ", ev.diversity())
+                    print("threshold: ", threshold)
 
                 del ev
 
                 # -- test
                 if isbest == True or hp["isSave"] != True:
                     out = net(test_ready[0])
-                    # ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
-                    # threshold_optim = calc.NelderMead(out, torch.squeeze(vd_ready[1]).long())
-                    # threshold = threshold_optim.optimize()
-                    # print(threshold)
-                    ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(test_ready[1]).long(), threshold)
+                    ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
+                    # ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(test_ready[1]).long(), threshold)
 
                     print("==test===========================")
                     print("epoch: ", epoch)
@@ -200,6 +217,7 @@ def main1():
                     print("acc_2: ", ev.acc_by_cat(cat_num=2))
                     print("acc_3: ", ev.acc_by_cat(cat_num=3))
                     print("diversity: ", ev.diversity())
+                    print("threshold: ", threshold)
                     del ev
 
             isbest = False
