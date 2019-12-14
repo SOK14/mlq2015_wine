@@ -133,10 +133,10 @@ def main1():
             with torch.no_grad():
                 # -- validation
                 out = net(vd_ready[0])
-                ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
-                # threshold_optim = calc.NelderMead(out, torch.squeeze(vd_ready[1]).long())
-                # threshold = threshold_optim.optimize()
-                # ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(vd_ready[1]).long(), threshold)
+                # ev = calc.EvaluateCat(out, torch.squeeze(vd_ready[1]).long())
+                threshold_optim = calc.NelderMead(out, torch.squeeze(vd_ready[1]).long())
+                threshold = threshold_optim.optimize()
+                ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(vd_ready[1]).long(), threshold)
 
                 # -- save condition check
                 if ev.diversity() < 0.8:
@@ -178,7 +178,7 @@ def main1():
                         if os.path.exists(r"./save/save_param" + r"/threshold" + best_score2[-1][1] + r'.csv'):
                             os.remove(r"./save/save_param" + r"/threshold" + best_score2[-1][1] + r'.csv')
                         id = r"2_" + str(k) + r"_" + str(epoch)
-                        best_score2 = best_score1[:2]
+                        best_score2 = best_score2[:2]
                         best_score2 += [[ev.quadratic_weighted_kappa(), id]]
                         best_score2.sort(reverse=True)
                         print(best_score1)
@@ -197,15 +197,15 @@ def main1():
                     print("acc_2: ", ev.acc_by_cat(cat_num=2))
                     print("acc_3: ", ev.acc_by_cat(cat_num=3))
                     print("diversity: ", ev.diversity())
-                    print("threshold: ", threshold)
+                    # print("threshold: ", threshold)
 
                 del ev
 
                 # -- test
                 if isbest == True or hp["isSave"] != True:
                     out = net(test_ready[0])
-                    ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
-                    # ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(test_ready[1]).long(), threshold)
+                    # ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
+                    ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(test_ready[1]).long(), threshold)
 
                     print("==test===========================")
                     print("epoch: ", epoch)
@@ -217,7 +217,7 @@ def main1():
                     print("acc_2: ", ev.acc_by_cat(cat_num=2))
                     print("acc_3: ", ev.acc_by_cat(cat_num=3))
                     print("diversity: ", ev.diversity())
-                    print("threshold: ", threshold)
+                    # print("threshold: ", threshold)
                     del ev
 
             isbest = False
@@ -256,14 +256,13 @@ def main_ev():
                 predict_sum = ev.predict
             else:
                 predict_sum += ev.predict
-                print(len(predict_sum))
-                print(len(predict_sum[0]))
             del ev
         predict = predict_sum / len(param_path_list)
         ev = calc.EvaluateCat(predict, torch.squeeze(test_ready[1]).long())
         print("==test===========================")
         print("acc_total: ", ev.acc_total())
         print("acc_ave: ", ev.acc_ave())
+        print("kappa: ", ev.quadratic_weighted_kappa())
         print("acc_0: ", ev.acc_by_cat(cat_num=0))
         print("acc_1: ", ev.acc_by_cat(cat_num=1))
         print("acc_2: ", ev.acc_by_cat(cat_num=2))
@@ -275,4 +274,4 @@ def main_ev():
 
 
 if __name__ == "__main__":
-    main1()
+    main_ev()
