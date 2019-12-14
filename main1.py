@@ -25,7 +25,7 @@ def get_hyperParam():
         "epoch_num": 5000,
         "learning_rate": 0.0001,
         "amsgrad_bool": True,  # -- for Adam optimizer
-        "isSave": True
+        "isSave": False
     }
 
 
@@ -132,7 +132,10 @@ def main1():
             with torch.no_grad():
                 # -- validation
                 out = net(vd_ready[0])
-                ev = calc.EvaluateCat(out, torch.squeeze(vd_ready[1]).long())
+                threshold_optim = calc.NelderMead(out, torch.squeeze(vd_ready[1]).long())
+                threshold = threshold_optim.optimize()
+                print(threshold)
+                ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(vd_ready[1]).long(), threshold)
 
                 # -- save condition check
                 if ev.diversity() < 0.8:
@@ -169,6 +172,7 @@ def main1():
                     print("epoch: ", epoch)
                     print("acc_total: ", ev.acc_total())
                     print("acc_ave: ", ev.acc_ave())
+                    print("kappa: ", ev.quadratic_weighted_kappa())
                     print("acc_0: ", ev.acc_by_cat(cat_num=0))
                     print("acc_1: ", ev.acc_by_cat(cat_num=1))
                     print("acc_2: ", ev.acc_by_cat(cat_num=2))
@@ -180,12 +184,17 @@ def main1():
                 # -- test
                 if isbest == True or hp["isSave"] != True:
                     out = net(test_ready[0])
-                    ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
+                    # ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
+                    # threshold_optim = calc.NelderMead(out, torch.squeeze(vd_ready[1]).long())
+                    # threshold = threshold_optim.optimize()
+                    # print(threshold)
+                    ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(test_ready[1]).long(), threshold)
 
                     print("==test===========================")
                     print("epoch: ", epoch)
                     print("acc_total: ", ev.acc_total())
                     print("acc_ave: ", ev.acc_ave())
+                    print("kappa: ", ev.quadratic_weighted_kappa())
                     print("acc_0: ", ev.acc_by_cat(cat_num=0))
                     print("acc_1: ", ev.acc_by_cat(cat_num=1))
                     print("acc_2: ", ev.acc_by_cat(cat_num=2))
@@ -248,4 +257,4 @@ def main_ev():
 
 
 if __name__ == "__main__":
-    main_ev()
+    main1()
