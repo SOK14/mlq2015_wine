@@ -19,7 +19,7 @@ def get_hyperParam():
     return {
         "cross_num": 4,
         "seed": 2015,
-        "criterion": "CrossEntropyLoss",
+        "criterion": "ReverseKlLoss",
         "optimizer": "Adam",
         "batch_size": 5,
         "epoch_num": 5000,
@@ -32,6 +32,8 @@ def get_hyperParam():
 def set_criterion(loss_type: str) -> Any:
     if loss_type == "CrossEntropyLoss":
         return nn.CrossEntropyLoss()
+    elif loss_type == "ReverseKlLoss":
+        return ml.ReverseKlLoss()
     else:
         print("ERROR in set_criterion")
         sys.exit()
@@ -108,6 +110,7 @@ def main1():
                 out = net(d_ready[0])
                 loss = criterion(out, d_ready[1])
                 loss.backward()
+                # print(loss.item())
                 optimizer.step()
 
             # -- evaluate
@@ -133,10 +136,10 @@ def main1():
             with torch.no_grad():
                 # -- validation
                 out = net(vd_ready[0])
-                # ev = calc.EvaluateCat(out, torch.squeeze(vd_ready[1]).long())
-                threshold_optim = calc.NelderMead(out, torch.squeeze(vd_ready[1]).long())
-                threshold = threshold_optim.optimize()
-                ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(vd_ready[1]).long(), threshold)
+                ev = calc.EvaluateCat(out, torch.squeeze(vd_ready[1]).long())
+                # threshold_optim = calc.NelderMead(out, torch.squeeze(vd_ready[1]).long())
+                # threshold = threshold_optim.optimize()
+                # ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(vd_ready[1]).long(), threshold)
 
                 # -- save condition check
                 if ev.diversity() < 0.8:
@@ -204,8 +207,8 @@ def main1():
                 # -- test
                 if isbest == True or hp["isSave"] != True:
                     out = net(test_ready[0])
-                    # ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
-                    ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(test_ready[1]).long(), threshold)
+                    ev = calc.EvaluateCat(out, torch.squeeze(test_ready[1]).long())
+                    # ev = calc.EvaluateCatWithThreshold(out, torch.squeeze(test_ready[1]).long(), threshold)
 
                     print("==test===========================")
                     print("epoch: ", epoch)

@@ -175,8 +175,8 @@ def quadratic_weighted_kappa(predict_cat: torch.Tensor, target: torch.Tensor, ca
 # -- nelder mead
 # -- maximization quadratic_weighted_kappa
 class NelderMead():
-    def __init__(self, out: torch.Tensor, target: torch.Tensor, alpha: float = 0.1, gamma: float = 0.2,
-                 beta: float = 0.05, delta: float = 0.05):
+    def __init__(self, out: torch.Tensor, target: torch.Tensor, alpha: float = 1.0, gamma: float = 2.0,
+                 beta: float = 0.5, delta: float = 0.5):
         s = nn.Softmax(dim=1)
         self.out = out
         self.predict = s(out)
@@ -213,7 +213,7 @@ class NelderMead():
                     thresholds[:-1] = self.shrink_contraction(thresholds[-1], thresholds[:-1])
             else:
                 # -- replace worst -> reflect
-                thresholds[-1] = reflect_threshold
+                thresholds[0] = reflect_threshold
 
         thresholds = self.order_thresholds(thresholds)
         return thresholds[-1]
@@ -452,3 +452,4 @@ class EvaluateCatWithThreshold():
             kappa = 1.0
 
         return kappa
+
